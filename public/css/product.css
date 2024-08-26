@@ -1,27 +1,109 @@
-.product-form {
-    width: 20rem;
-    max-width: 90%;
-    margin: auto;
-    display: block;
+.product-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #ffffff;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 15px;
 }
 
 .product-item {
-    width: 20rem;
-    max-width: 95%;
-    margin: 1rem;
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.product-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.card__header {
+    padding: 10px 15px;
+    background-color: #f8f8f8;
+    border-bottom: 1px solid #e0e0e0;
 }
 
 .product__title {
-    font-size: 1.2rem;
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: #333333;
+    margin: 0;
+}
+
+.card__image img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.card__content {
+    padding: 10px 15px;
     text-align: center;
 }
 
 .product__price {
-    text-align: center;
-    color: #4d4d4d;
-    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+    color: #27ae60;
+    margin: 10px 0;
 }
 
 .product__description {
+    font-size: 0.9rem;
+    color: #777777;
+}
+
+.card__actions {
+    padding: 10px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #e0e0e0;
+}
+
+.btn {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    color: #ffffff;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+.no-products {
     text-align: center;
+    padding: 50px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.no-products h1 {
+    font-size: 1.75rem;
+    color: #555555;
+    margin-bottom: 20px;
+}
+
+.no-products .btn-primary {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #ffffff;
+    border-radius: 5px;
 }

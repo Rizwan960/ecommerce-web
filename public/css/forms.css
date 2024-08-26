@@ -1,23 +1,61 @@
 .form-control {
-  margin: 1rem 0;
+  margin: 1.5rem 0;
 }
 
-.form-control label,
+.form-control label {
+  display: block;
+  font-weight: bold;
+  color: #333333;
+  margin-bottom: 0.5rem;
+}
+
 .form-control input,
 .form-control textarea {
   display: block;
   width: 100%;
-  margin-bottom: 0.25rem;
-}
-
-.form-control input,
-.form-control textarea {
-  border: 1px solid #a1a1a1;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  border: 1px solid #cccccc;
   font: inherit;
-  border-radius: 2px;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .form-control input:focus,
 .form-control textarea:focus {
-  outline-color: #00695c;
+  outline: none;
+  border-color: #00796b;
+  box-shadow: 0 0 5px rgba(0, 121, 107, 0.3);
+  background-color: #ffffff;
+}
+
+.form-control textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.form-control input::placeholder,
+.form-control textarea::placeholder {
+  color: #a1a1a1;
+}
+
+.form-control input[type="submit"] {
+  background-color: #00796b;
+  color: #ffffff;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.form-control input[type="submit"]:hover {
+  background-color: #005f56;
+  transform: translateY(-2px);
+}
+
+.form-control input[type="submit"]:active {
+  background-color: #004943;
+  transform: translateY(0);
 }
