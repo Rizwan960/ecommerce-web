@@ -1,0 +1,89 @@
+/* General styling */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+.orders-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 1rem;
+}
+
+.orders-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.order-card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    width: 100%;
+}
+
+h1, h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.order-details table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.order-details th, .order-details td {
+    padding: 0.5rem;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.order-details th {
+    background-color: #f9f9f9;
+}
+
+.product-image {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+tfoot td {
+    font-weight: bold;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.grand-total {
+    margin-top: 2rem;
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: right;
+    border-top: 2px solid #333;
+    padding-top: 1rem;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 2rem;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.empty-state h1 {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+}
+
+.empty-state p {
+    font-size: 1rem;
+    color: #666;
+}

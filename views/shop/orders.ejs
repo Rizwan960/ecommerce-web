@@ -1,9 +1,65 @@
 <%- include('../includes/head.ejs') %>
-    </head>
+<link rel="stylesheet" href="/css/order.css">
+</head>
 
-    <body>
-        <%- include('../includes/navigation.ejs') %>
-        <main>
-            <h1>Nothing there!</h1>
-        </main>
-        <%- include('../includes/end.ejs') %>
+<body>
+    <%- include('../includes/navigation.ejs') %>
+    <main>
+        <div class="orders-container">
+            <% if (orders && orders.length > 0) { %>
+                <h1>Your Orders</h1>
+                <div class="orders-wrapper">
+                    <% let grandTotal = 0; %>
+                    <% orders.forEach(order => { %>
+                        <div class="order-card">
+                            <div class="order-details">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Product</th>
+                                            <th>Image</th>
+                                            <th>Quantity</th>
+                                            <th>Price</th>
+                                            <th>Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% let orderTotal = 0; %>
+                                        <% order.products.forEach(product => { %>
+                                            <% const productTotal = product.orderItem.quantity * product.price; %>
+                                            <% orderTotal += productTotal; %>
+                                            <tr>
+                                                <td><%= product.title %></td>
+                                                <td><img src="<%= product.imageUrl %>" alt="<%= product.name %>" class="product-image"></td>
+                                                <td><%= product.orderItem.quantity %></td>
+                                                <td>$<%= product.price.toFixed(2) %></td>
+                                                <td>$<%= productTotal.toFixed(2) %></td>
+                                            </tr>
+                                        <% }) %>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="4" class="text-right">Order Total:</td>
+                                            <td>$<%= orderTotal.toFixed(2) %></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                        <% grandTotal += orderTotal; %>
+                    <% }) %>
+                    <div class="grand-total">
+                        <h2>Grand Total: $<%= grandTotal.toFixed(2) %></h2>
+                    </div>
+                </div>
+            <% } else { %>
+                <div class="empty-state">
+                    <h1>No Orders Yet!</h1>
+                    <p>It looks like you haven't placed any orders yet. Browse our shop and make your first purchase!</p>
+                </div>
+            <% } %>
+        </div>
+    </main>
+    <%- include('../includes/end.ejs') %>
+</body>
+</html>
