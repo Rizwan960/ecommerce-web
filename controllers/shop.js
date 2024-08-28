@@ -1,3 +1,52 @@
+/*IF YOU ARE USING MONGODB USE BELOW METHOD TO CREATE TABLE STRUCTURE */
+
+const Product = require('../models/product');
+
+
+exports.getProducts = (req, res, next) => {
+  Product.fetchAll()
+  .then(products=>{
+    res.render('shop/product-list', {
+      prods: products,
+      pageTitle: 'All Products',
+      path: '/products'
+    });
+  })
+  .catch(err=>console.log(err)) 
+};
+
+exports.getIndex = (req, res, next) => {
+  Product.fetchAll()
+  .then(products=>{
+    res.render('shop/index', {
+      prods: products,
+      pageTitle: 'Shop',
+      path: '/'
+    });
+  })
+  .catch(err=>console.log(err))
+};
+
+exports.getProduct = (req, res, next) => {
+  const prodId = req.params.productId;
+  Product.findById(prodId)
+  .then((product)=> {
+    res.render('shop/product-detail', {
+      product: product,
+      pageTitle: product.title,
+      path: '/products'
+    });
+  })
+  .catch(err=>console.log(err))
+};
+
+
+
+
+
+/* 
+IF YOU ARE USING MYSQL AND SEQUELIZE USE BELOW METHOD TO CREATE TABLE STRUCTURE
+
 const Product = require('../models/product');
 const Cart = require('../models/cart');
 const { where } = require('sequelize');
@@ -35,7 +84,6 @@ exports.getProduct = (req, res, next) => {
   //   }
   // )
   // .catch(err=>console.log(err));
-  
 };
 
 exports.getIndex = (req, res, next) => {
@@ -48,8 +96,6 @@ exports.getIndex = (req, res, next) => {
     });
   })
   .catch(err=>console.log(err))
- 
- 
 };
 
 exports.getCart = (req, res, next) => {
@@ -149,5 +195,5 @@ exports.getOrders = async (req, res, next) => {
   }
 };
 
-
+*/
 

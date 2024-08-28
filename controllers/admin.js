@@ -1,3 +1,36 @@
+/*IF YOU ARE USING MONGODB USE BELOW METHOD TO CREATE TABLE STRUCTURE */
+
+const { where } = require('sequelize');
+const Product = require('../models/product');
+
+exports.getAddProduct = (req, res, next) => {
+  res.render('admin/edit-product', {
+    pageTitle: 'Add Product',
+    path: '/admin/add-product',
+    editing: false
+  });
+};
+
+exports.postAddProduct = (req, res, next) => {
+  const title = req.body.title;
+  const imageUrl = req.body.imageUrl;
+  const price = req.body.price;
+  const description = req.body.description;
+  const product=new Product(title,price,description,imageUrl);
+  product.save()
+ .then((ress)=>{
+  console.log('Product Created Successfully');
+  res.redirect('/admin/products')
+ })
+ .catch(err=>console.log(err))
+
+};
+
+
+
+/* 
+IF YOU ARE USING MYSQL AND SEQUELIZE USE BELOW METHOD TO CREATE TABLE STRUCTURE
+
 const { where } = require('sequelize');
 const Product = require('../models/product');
 
@@ -96,3 +129,8 @@ exports.postDeleteProduct = (req, res, next) => {
   })
   .catch(err=>console.log(err));
 };
+
+
+
+*/
+

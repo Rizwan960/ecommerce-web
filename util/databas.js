@@ -10,7 +10,6 @@ MongoClient.connect('mongodb+srv://f2020065105:11223344@demoproject.wdsif.mongod
 .then((result) => {
     console.log("Connected")
     _db=result.db();
-    console.log(result)
     callback(result)
 }).catch((err) => {
     console.log(err)

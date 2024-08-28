@@ -18,28 +18,29 @@ app.set('views', 'views');
 
 // Routed imports
 const adminRoutes = require('./routes/admin');
-// const shopRoutes = require('./routes/shop');
+const shopRoutes = require('./routes/shop');
 
 // App usage/midlewares imports
 app.use((req,res,next)=>{
-    User.findByPk(1)
-    .then(user=>{
-        req.user=user;
-        next();
-    })
-    .catch(err=>console.log(err))
+    // User.findByPk(1)
+    // .then(user=>{
+    //     req.user=user;
+    //     next();
+    // })
+    // .catch(err=>console.log(err))
+    next()
 });
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/admin', adminRoutes);
-// app.use(shopRoutes);
+app.use(shopRoutes);
 app.use(errorController.get404);
 
 /*------------------------------Core Imports end here----------------------------------*/
 
 /* if you are using mongo db use this method to connect and run app on port */
 
-const mongoConnect=require('./util/databas')
+const mongoConnect=require('./util/databas').mongoConnect
 
 mongoConnect(()=>{
    
