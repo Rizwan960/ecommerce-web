@@ -1,36 +1,51 @@
 <%- include('../includes/head.ejs') %>
+<!-- Bootstrap CSS -->
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="/css/cart.css">
 </head>
 
 <body>
     <%- include('../includes/navigation.ejs') %>
-    <main class="cart-container">
+    <main class="container mt-5">
         <% if (products.length > 0) { %>
-            <ul class="cart__item-list">
+            <h2 class="text-center mb-4">Your Shopping Cart</h2>
+            <ul class="list-group mb-4">
                 <% products.forEach(p => { %>
-                    <li class="cart__item">
-                        <div class="cart__item-details">
-                            <h1><%= p.title %></h1>
-                            <h2>Quantity: <%= p.cartItem.quantity %></h2>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                            <img src="<%= p.imageUrl %>" alt="<%= p.title %>" class="img-thumbnail mr-3" style="width: 100px; height: auto;">
+                            <div>
+                                <h5><%= p.title %></h5>
+                                <p class="mb-1">Quantity: <%= p.cartItem.quantity %></p>
+                                <p class="mb-0 text-muted">$<%= p.price.toFixed(2) %></p>
+                            </div>
                         </div>
-                        <div class="cart__item-actions">
+                        <div>
                             <form action="/cart-delete-item" method="POST">
                                 <input type="hidden" value="<%= p.id %>" name="productId">
-                                <button class="btn btn-danger" type="submit">Delete</button>
+                                <button class="btn btn-danger btn-sm" type="submit">Delete</button>
                             </form>
                         </div>
                     </li>
                 <% }) %>
             </ul>
-            <div class="centered">
-                <form action="/create-order" method="post"><button type="submit" class="btn">Order Now</button></form>
+            <div class="text-center mb-5">
+                <form action="/create-order" method="post">
+                    <button type="submit" class="btn btn-success btn-lg">Order Now</button>
+                </form>
             </div>
         <% } else { %>
-            <div class="cart-empty">
-                <h1>Your Cart is Empty</h1>
-                <a href="/" class="btn btn-primary">Continue Shopping</a>
+            <div class="text-center mt-5">
+                <h1 class="display-4">Your Cart is Empty</h1>
+                <p class="lead">Browse our products and add items to your cart!</p>
+                <a href="/" class="btn btn-primary btn-lg mt-3">Continue Shopping</a>
             </div>
         <% } %>
     </main>
     <%- include('../includes/end.ejs') %>
+    
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>

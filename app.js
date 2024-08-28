@@ -1,3 +1,5 @@
+/*------------------------------Core Imports for each Projects as per need----------------------------------*/
+
 // Core imports for the node js main file
 const path = require('path');
 const express = require('express');
@@ -5,13 +7,7 @@ const bodyParser = require('body-parser');
 
 // Controllers and Sequelize imports for controller and Database
 const errorController = require('./controllers/error');
-const sequelize =require('./util/databas');
-const Product = require('./models/product')
-const User = require('./models/user')
-const Cart = require('./models/cart')
-const CartItem = require('./models/cart-item')
-const Order = require('./models/order')
-const OrderItem = require('./models/order-item')
+// const User = require('./models/user')
 
 
 // Core imports
@@ -22,7 +18,7 @@ app.set('views', 'views');
 
 // Routed imports
 const adminRoutes = require('./routes/admin');
-const shopRoutes = require('./routes/shop');
+// const shopRoutes = require('./routes/shop');
 
 // App usage/midlewares imports
 app.use((req,res,next)=>{
@@ -36,9 +32,34 @@ app.use((req,res,next)=>{
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/admin', adminRoutes);
-app.use(shopRoutes);
+// app.use(shopRoutes);
 app.use(errorController.get404);
 
+/*------------------------------Core Imports end here----------------------------------*/
+
+/* if you are using mongo db use this method to connect and run app on port */
+
+const mongoConnect=require('./util/databas')
+
+mongoConnect(()=>{
+   
+    app.listen(3000)
+})
+
+
+
+
+/* For using MYSQL with SEQUELIZE USE THE BELOW METHOD 
+
+
+// Controllers and Sequelize imports for controller and Database
+const sequelize =require('./util/databas');
+const Product = require('./models/product')
+const User = require('./models/user')
+const Cart = require('./models/cart')
+const CartItem = require('./models/cart-item')
+const Order = require('./models/order')
+const OrderItem = require('./models/order-item')
 
 // Database Table Relations
 Product.belongsTo(User, { constraints: true, onDelete: 'CASCADE' });
@@ -74,3 +95,4 @@ sequelize.sync(
 })
 .catch(err=>console.log(err));
 
+*/
