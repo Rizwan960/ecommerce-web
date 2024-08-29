@@ -16,13 +16,13 @@
                             <img src="<%= p.imageUrl %>" alt="<%= p.title %>" class="img-thumbnail mr-3" style="width: 100px; height: auto;">
                             <div>
                                 <h5><%= p.title %></h5>
-                                <p class="mb-1">Quantity: <%= p.cartItem.quantity %></p>
-                                <p class="mb-0 text-muted">$<%= p.price.toFixed(2) %></p>
+                                <p class="mb-1">Quantity: <%= p.quantity %></p>
+                                <p class="mb-0 text-muted">$<%= p.price %></p>
                             </div>
                         </div>
                         <div>
                             <form action="/cart-delete-item" method="POST">
-                                <input type="hidden" value="<%= p.id %>" name="productId">
+                                <input type="hidden" value="<%= p._id %>" name="productId">
                                 <button class="btn btn-danger btn-sm" type="submit">Delete</button>
                             </form>
                         </div>

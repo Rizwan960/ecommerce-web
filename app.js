@@ -22,7 +22,7 @@ const shopRoutes = require('./routes/shop');
 
 // App usage/midlewares imports
 app.use((req,res,next)=>{
-    User.findById("66d03337b9b5a67b05ad9c87")
+    User.findById("66d056fdb9b5a67b05ad9c8b")
     .then(user=>{
         req.user=new User(user.name,user.email,user.cart,user._id);
         next();

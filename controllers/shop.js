@@ -44,18 +44,67 @@ exports.postCart = async (req, res, next) => {
     const prodId = req.body.productId;
   Product.findById(prodId).then(
     prod=>{
-      return req.user.addToCart(prod)
+      return  req.user.addToCart(prod)
+     
     }
-  ).then(res=>console.log(res))
-  .catch(err=>console.log(err))
+  ).then(result=>{
     res.redirect('/cart');
+  })
+  .catch(err=>console.log(err))
+  
   } catch (err) {
     console.log(err);
     next(err); // Pass the error to the error handling middleware
   }
 };
 
+exports.getCart = (req, res, next) => {
+  req.user.getCart()
+    .then(products=>{
+      res.render('shop/cart', {
+        path: '/cart',
+        pageTitle: 'Your Cart',
+        products: products
+      });
+    })
+    .catch(err=>console.log(err))
+}
 
+exports.postCartDeleteProduct = async (req, res, next) => {
+    const prodId = req.body.productId;
+    req.user.deleteItemFromCart(prodId)
+    .then(result=>{
+    res.redirect('/cart');
+
+    })
+    .catch(err=>console.log(err))
+};
+
+exports.postOrders = async (req, res, next) => {
+  try {
+   await req.user.addOrder()
+    // Redirect to orders page
+    res.redirect('/orders');
+  } catch (err) {
+    console.log(err);
+    next(err); // Pass the error to the next middleware
+  }
+};
+
+
+exports.getOrders = async (req, res, next) => {
+  try {
+    const orders = await req.user.getOrders();
+    res.render('shop/orders', {
+      path: '/orders',
+      pageTitle: 'Your Orders',
+      orders: orders
+    });
+  } catch (err) {
+    console.log(err);
+    next(err); // Pass the error to the next middleware
+  }
+};
 
 
 /* 
@@ -175,8 +224,8 @@ exports.postOrders = async (req, res, next) => {
     
     // Add products to the order
     await order.addProducts(products.map(product => {
-      product.orderItem = { quantity: product.cartItem.quantity };
-      return product;
+    product.orderItem = { quantity: product.cartItem.quantity };
+    return product;
     }));
 
     // Clear the cart
