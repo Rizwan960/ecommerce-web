@@ -1,3 +1,13 @@
+/*IF YOU ARE USING MONGODB USE BELOW METHOD TO CREATE TABLE STRUCTURE */
+
+
+
+
+
+/* 
+IF YOU ARE USING MYSQL AND SEQUELIZE USE BELOW METHOD TO CREATE TABLE STRUCTURE
+
+
 const Sequelize = require('sequelize');
 const sequelize = require('../util/databas')
 
@@ -13,3 +23,7 @@ const Cart = sequelize.define('cart',{
 })
 
 module.exports=Cart
+
+
+*/
+

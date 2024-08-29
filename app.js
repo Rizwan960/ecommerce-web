@@ -7,7 +7,7 @@ const bodyParser = require('body-parser');
 
 // Controllers and Sequelize imports for controller and Database
 const errorController = require('./controllers/error');
-// const User = require('./models/user')
+const User = require('./models/user')
 
 
 // Core imports
@@ -22,13 +22,12 @@ const shopRoutes = require('./routes/shop');
 
 // App usage/midlewares imports
 app.use((req,res,next)=>{
-    // User.findByPk(1)
-    // .then(user=>{
-    //     req.user=user;
-    //     next();
-    // })
-    // .catch(err=>console.log(err))
-    next()
+    User.findById("66d03337b9b5a67b05ad9c87")
+    .then(user=>{
+        req.user=new User(user.name,user.email,user.cart,user._id);
+        next();
+    })
+    .catch(err=>console.log(err))
 });
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));

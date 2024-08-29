@@ -39,7 +39,21 @@ exports.getProduct = (req, res, next) => {
   })
   .catch(err=>console.log(err))
 };
-
+exports.postCart = async (req, res, next) => {
+  try {
+    const prodId = req.body.productId;
+  Product.findById(prodId).then(
+    prod=>{
+      return req.user.addToCart(prod)
+    }
+  ).then(res=>console.log(res))
+  .catch(err=>console.log(err))
+    res.redirect('/cart');
+  } catch (err) {
+    console.log(err);
+    next(err); // Pass the error to the error handling middleware
+  }
+};
 
 
 
