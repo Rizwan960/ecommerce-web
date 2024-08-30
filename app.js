@@ -22,12 +22,14 @@ const shopRoutes = require('./routes/shop');
 
 // App usage/midlewares imports
 app.use((req,res,next)=>{
-    User.findById("66d056fdb9b5a67b05ad9c8b")
-    .then(user=>{
-        req.user=new User(user.name,user.email,user.cart,user._id);
-        next();
-    })
-    .catch(err=>console.log(err))
+    // User.findById("66d056fdb9b5a67b05ad9c8b")
+    // .then(user=>{
+    //     req.user=new User(user.name,user.email,user.cart,user._id);
+    //     next();
+    // })
+    // .catch(err=>console.log(err))
+    next();
+
 });
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -37,14 +39,21 @@ app.use(errorController.get404);
 
 /*------------------------------Core Imports end here----------------------------------*/
 
-/* if you are using mongo db use this method to connect and run app on port */
+/* if you are using mongoDbuse this method to connect and run app on port */
 
-const mongoConnect=require('./util/databas').mongoConnect
+// const mongoConnect=require('./util/databas').mongoConnect
+// mongoConnect(()=>{
+//     app.listen(3000)
+// })
 
-mongoConnect(()=>{
-   
-    app.listen(3000)
+// If using mongoose then use this:
+
+const mongoes = require('mongoose')
+mongoes.connect('mongodb+srv://f2020065105:11223344@demoproject.wdsif.mongodb.net/?retryWrites=true&w=majority&appName=DemoProject')
+.then(result=>{
+    app.listen(3000);
 })
+.catch(err=>console.log(err))
 
 
 

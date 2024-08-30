@@ -1,4 +1,4 @@
-/* If you are using MongoDb use below method */
+/* If you are using MongoDb use below method 
 
 const mongodb=require('mongodb')
 const MongoClient=mongodb.MongoClient
@@ -31,6 +31,8 @@ const getDb=()=>{
 exports.mongoConnect=mongoConnect
 exports.getDb=getDb
 
+
+*/
 
 /*
 

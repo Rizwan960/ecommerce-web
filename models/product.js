@@ -1,5 +1,21 @@
 
-/*IF YOU ARE USING MONGODB USE BELOW METHOD TO CREATE TABLE STRUCTURE */
+/*IF YOU ARE USING MONGODB with Mongoose USE BELOW METHOD TO CREATE TABLE STRUCTURE */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*IF YOU ARE USING MONGODB USE BELOW METHOD TO CREATE TABLE STRUCTURE 
 
 const getDb=require('../util/databas').getDb
 const mongodb= require('mongodb')
@@ -63,6 +79,9 @@ class Product{
 
 }
 
+module.exports=Product
+
+*/
 
 
 /* 
@@ -97,5 +116,5 @@ const Product = sequelize.define('product',{
 
 */
 
-module.exports=Product
+
 
