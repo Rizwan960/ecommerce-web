@@ -29,16 +29,16 @@
                                         </thead>
                                         <tbody>
                                             <% let orderTotal = 0; %>
-                                            <% order.items.forEach(product => { %>
-                                                <% const productTotal = product.quantity * product.price; %>
+                                            <% order.products.forEach(product => { %>
+                                                <% const productTotal = product.quantity * product.product.price; %>
                                                 <% orderTotal += productTotal; %>
                                                 <tr>
-                                                    <td><%= product.title %></td>
+                                                    <td><%= product.product.title %></td>
                                                     <td>
-                                                        <img src="<%= product.imageUrl %>" alt="<%= product.name %>" class="img-fluid" style="width: 75px; height: auto;">
+                                                        <img src="<%= product.product.imageUrl %>" alt="<%= product.product.name %>" class="img-fluid" style="width: 75px; height: auto;">
                                                     </td>
                                                     <td><%= product.quantity %></td>
-                                                    <td>$<%= product.price %></td>
+                                                    <td>$<%= product.product.price %></td>
                                                     <td>$<%= productTotal %></td>
                                                 </tr>
                                             <% }) %>

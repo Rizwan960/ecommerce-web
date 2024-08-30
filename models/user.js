@@ -31,6 +31,80 @@ const userSchema = new Schema({
   },
 });
 
+userSchema.methods.addToCart= function(product){
+  const cartProductIndex = this.cart.items
+  .findIndex(cp=>{
+    return cp.productId.toString()===product._id.toString()
+  })
+  let newQuantity=1;
+  const updateCartItem=[...this.cart.items]
+
+  if(cartProductIndex>=0)
+  {
+    newQuantity= this.cart.items[cartProductIndex].quantity+1;
+    updateCartItem[cartProductIndex].quantity=newQuantity;
+  }else{
+    updateCartItem.push({
+      productId:product._id,
+      quantity:newQuantity
+    })
+  }
+  const updateCart={items:updateCartItem}
+  this.cart=updateCart;
+  return this.save()
+}
+
+userSchema.methods.getCart = function () {
+  // Get product IDs from the cart
+  const productIds = this.cart.items.map(item => item.productId);
+  // Find products in the database
+  return mongoose.model('Product').find({ _id: { $in: productIds } })
+    .then(products => {
+      // Map products to a dictionary for easy lookup
+      const productMap = new Map(products.map(p => [p._id.toString(), p]));
+      // Update cart items based on product stock
+      const updatedCartItems = this.cart.items
+        .map(cartItem => {
+          const product = productMap.get(cartItem.productId.toString());
+          if (product) {
+            const maxAvailableQuantity = product.stock;
+            if (maxAvailableQuantity <= 0) {
+              // Skip items with no stock
+              return null;
+            } else if (cartItem.quantity > maxAvailableQuantity) {
+              // Adjust quantity to available stock
+              cartItem.quantity = maxAvailableQuantity;
+            }
+          } else {
+            // Remove items with no corresponding product
+            return null;
+          }
+          return cartItem;
+        })
+        .filter(cartItem => cartItem !== null); // Remove null items
+      // Update the user's cart with the new items
+      this.cart.items = updatedCartItems;
+      return this.save().then(() => {
+        // Return products with updated quantities
+        return products.map(p => {
+          const quantity = updatedCartItems.find(i => i.productId.toString() === p._id.toString())?.quantity || 0;
+          return { ...p.toObject(), quantity };
+        });
+      });
+    })
+    .catch(err => {
+      console.error(err);
+      throw new Error('Failed to retrieve cart');
+    });
+};
+
+userSchema.methods.deleteItemFromCart=function(productId){
+  const updatedCartItems=this.cart.items.filter(items=>{
+    return items.productId.toString() !== productId.toString();
+  });
+  this.cart.items=updatedCartItems;
+  return this.save();
+}
 
 module.exports=mongoose.model('User',userSchema);
 

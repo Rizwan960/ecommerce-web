@@ -1,6 +1,7 @@
 /*IF YOU ARE USING MONGODB with Mongoose USE BELOW METHOD TO CREATE TABLE STRUCTURE */
 
 const Product = require('../models/product');
+const Order = require('../models/order');
 
 
 exports.getProducts = (req, res, next) => {
@@ -82,28 +83,53 @@ exports.postCartDeleteProduct = async (req, res, next) => {
 
 exports.postOrders = async (req, res, next) => {
   try {
-  await req.user.addOrder()
-    // Redirect to orders page
+    const products = await req.user.getCart();
+
+    const orderProducts = products.map(p => {
+      return { product: {
+        _id: p._id,
+        title: p.title,
+        price: p.price,
+        description: p.description,
+        imageUrl: p.imageUrl,
+      }, quantity: p.quantity, };
+    });
+
+    const order = new Order({
+      user: {
+        name: req.user.name,
+        userId: req.user._id
+      },
+      products: orderProducts
+    });
+
+    await order.save();
+    
+    // Optionally, clear the cart after creating the order
+    req.user.cart.items = [];
+    await req.user.save();
+
     res.redirect('/orders');
   } catch (err) {
-    console.log(err);
-    next(err); // Pass the error to the next middleware
+    console.error(err);
+    next(err); 
   }
 };
 
 
+
 exports.getOrders = async (req, res, next) => {
-  try {
-    const orders = await req.user.getOrders();
-    res.render('shop/orders', {
-      path: '/orders',
-      pageTitle: 'Your Orders',
-      orders: orders
-    });
-  } catch (err) {
-    console.log(err);
-    next(err); // Pass the error to the next middleware
-  }
+    Order.find({
+      'user.userId':req.user._id
+    }).
+    then(orders=>{
+      console.log(orders)
+      res.render('shop/orders', {
+        path: '/orders',
+        pageTitle: 'Your Orders',
+        orders: orders
+      })
+    }).catch(err=>console.log(err))
 };
 
 
