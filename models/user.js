@@ -1,25 +1,38 @@
 /*IF YOU ARE USING MONGODB with Mongoose USE BELOW METHOD TO CREATE TABLE STRUCTURE */
 
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 
+const userSchema = new Schema({
+  name: {
+    type:String,
+    required:true,
+  },
+  email: {
+    type:String,
+    required:true,
+  },
+  cart:{
+    items:[
+      {
+        productId:{
+          type: Schema.Types.ObjectId,
+          ref:'Product',
+          required: true
+        },
+        quantity:{
+          type:Number,
+          required: true
+        }
+      }
+    ],
+
+  },
+});
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+module.exports=mongoose.model('User',userSchema);
 
 
 /*IF YOU ARE USING MONGODB USE BELOW METHOD TO CREATE TABLE STRUCTURE 
@@ -137,7 +150,7 @@ class User{
 
   addOrder() {
     const db = getDb();
-   return this.getCart().then(products=>{
+  return this.getCart().then(products=>{
       const order = {
         items: products,
         user:{
@@ -179,6 +192,9 @@ class User{
 module.exports=User
 
 */
+
+//------------------------------------------------------------------------------------------------------------------------------
+
 
 /* 
 IF YOU ARE USING MYSQL AND SEQUELIZE USE BELOW METHOD TO CREATE TABLE STRUCTURE

@@ -1,4 +1,116 @@
-/*IF YOU ARE USING MONGODB USE BELOW METHOD TO CREATE TABLE STRUCTURE */
+/*IF YOU ARE USING MONGODB with Mongoose USE BELOW METHOD TO CREATE TABLE STRUCTURE */
+
+const Product = require('../models/product');
+
+
+exports.getProducts = (req, res, next) => {
+  Product.find()
+  .then(products=>{
+    res.render('shop/product-list', {
+      prods: products,
+      pageTitle: 'All Products',
+      path: '/products'
+    });
+  })
+  .catch(err=>console.log(err)) 
+};
+
+exports.getIndex = (req, res, next) => {
+  Product.find()
+  .then(products=>{
+    res.render('shop/index', {
+      prods: products,
+      pageTitle: 'Shop',
+      path: '/'
+    });
+  })
+  .catch(err=>console.log(err))
+};
+
+exports.getProduct = (req, res, next) => {
+  const prodId = req.params.productId;
+  Product.findById(prodId)
+  .then((product)=> {
+    res.render('shop/product-detail', {
+      product: product,
+      pageTitle: product.title,
+      path: '/products'
+    });
+  })
+  .catch(err=>console.log(err))
+};
+
+exports.postCart = async (req, res, next) => {
+  try {
+    const prodId = req.body.productId;
+  Product.findById(prodId).then(
+    prod=>{
+      return  req.user.addToCart(prod)
+    }
+  ).then(result=>{
+    res.redirect('/cart');
+  })
+  .catch(err=>console.log(err))
+  
+  } catch (err) {
+    console.log(err);
+    next(err); // Pass the error to the error handling middleware
+  }
+};
+
+exports.getCart = (req, res, next) => {
+  req.user.getCart()
+    .then(products=>{
+      res.render('shop/cart', {
+        path: '/cart',
+        pageTitle: 'Your Cart',
+        products: products
+      });
+    })
+    .catch(err=>console.log(err))
+}
+
+exports.postCartDeleteProduct = async (req, res, next) => {
+    const prodId = req.body.productId;
+    req.user.deleteItemFromCart(prodId)
+    .then(result=>{
+    res.redirect('/cart');
+
+    })
+    .catch(err=>console.log(err))
+};
+
+exports.postOrders = async (req, res, next) => {
+  try {
+  await req.user.addOrder()
+    // Redirect to orders page
+    res.redirect('/orders');
+  } catch (err) {
+    console.log(err);
+    next(err); // Pass the error to the next middleware
+  }
+};
+
+
+exports.getOrders = async (req, res, next) => {
+  try {
+    const orders = await req.user.getOrders();
+    res.render('shop/orders', {
+      path: '/orders',
+      pageTitle: 'Your Orders',
+      orders: orders
+    });
+  } catch (err) {
+    console.log(err);
+    next(err); // Pass the error to the next middleware
+  }
+};
+
+
+
+
+
+/*IF YOU ARE USING MONGODB USE BELOW METHOD TO CREATE TABLE STRUCTURE 
 
 const Product = require('../models/product');
 
@@ -45,7 +157,6 @@ exports.postCart = async (req, res, next) => {
   Product.findById(prodId).then(
     prod=>{
       return  req.user.addToCart(prod)
-     
     }
   ).then(result=>{
     res.redirect('/cart');
@@ -82,7 +193,7 @@ exports.postCartDeleteProduct = async (req, res, next) => {
 
 exports.postOrders = async (req, res, next) => {
   try {
-   await req.user.addOrder()
+  await req.user.addOrder()
     // Redirect to orders page
     res.redirect('/orders');
   } catch (err) {
@@ -105,6 +216,11 @@ exports.getOrders = async (req, res, next) => {
     next(err); // Pass the error to the next middleware
   }
 };
+
+ */
+
+//------------------------------------------------------------------------------------------------------------------------------
+
 
 
 /* 
