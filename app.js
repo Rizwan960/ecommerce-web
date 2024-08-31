@@ -9,6 +9,11 @@ const bodyParser = require('body-parser');
 const errorController = require('./controllers/error');
 const User = require('./models/user')
 
+const mongoes = require('mongoose')
+const session = require('express-session')
+const crypto = require('crypto');
+const secret = crypto.randomBytes(32).toString('hex');
+
 
 // Core imports
 const app = express();
@@ -19,6 +24,7 @@ app.set('views', 'views');
 // Routed imports
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
+const authRoutes = require('./routes/auth');
 
 // App usage/midlewares imports
 app.use((req,res,next)=>{
@@ -36,7 +42,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
+app.use(authRoutes);
 app.use(errorController.get404);
+app.use(session({secret:secret,resave:false,saveUninitialized:false}))
 
 /*------------------------------Core Imports end here----------------------------------*/
 
@@ -49,7 +57,7 @@ app.use(errorController.get404);
 
 // If using mongoose then use this:
 
-const mongoes = require('mongoose')
+
 mongoes.connect('mongodb+srv://f2020065105:11223344@demoproject.wdsif.mongodb.net/?retryWrites=true&w=majority&appName=DemoProject')
 .then(result=>{
     User.findOne().then(user=>{
