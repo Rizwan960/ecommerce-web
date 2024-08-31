@@ -2,49 +2,66 @@
 
 // Core imports for the node js main file
 const path = require('path');
+
 const express = require('express');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+const session = require('express-session');
+const MongoDBStore = require('connect-mongodb-session')(session);
+const crypto = require('crypto');
+const secret = crypto.randomBytes(32).toString('hex');
+const MONGODB_URI='mongodb+srv://f2020065105:11223344@demoproject.wdsif.mongodb.net/?retryWrites=true&w=majority&appName=DemoProject'
+
+
 
 // Controllers and Sequelize imports for controller and Database
 const errorController = require('./controllers/error');
 const User = require('./models/user')
 
-const mongoes = require('mongoose')
-const session = require('express-session')
-const crypto = require('crypto');
-const secret = crypto.randomBytes(32).toString('hex');
-
-
 // Core imports
 const app = express();
+const store = new MongoDBStore({
+  uri: MONGODB_URI,
+  collection: 'sessions'
+});
+
 app.set('view engine', 'ejs');
 app.set('views', 'views');
+
 
 
 // Routed imports
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 const authRoutes = require('./routes/auth');
-
-// App usage/midlewares imports
-app.use((req,res,next)=>{
-    User.findById("66d1c24e188028e9c517c21b")
-    .then(user=>{
-        req.user=user;
-        next();
-    })
-    .catch(err=>console.log(err))
-    
-});
-
-
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
+
+
+app.use(session({
+    secret:secret,
+    resave:false,
+    saveUninitialized:false,
+    store:store
+}))
+
+app.use((req,res,next)=>{
+    User.findById(req.session.user)
+    .then(user=>{
+     req.user=user;
+     next()
+    })
+    .catch(err=>console.log(err))
+})
+
+
+
+// App usage/midlewares imports
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 app.use(authRoutes);
 app.use(errorController.get404);
-app.use(session({secret:secret,resave:false,saveUninitialized:false}))
+
 
 /*------------------------------Core Imports end here----------------------------------*/
 
@@ -58,7 +75,7 @@ app.use(session({secret:secret,resave:false,saveUninitialized:false}))
 // If using mongoose then use this:
 
 
-mongoes.connect('mongodb+srv://f2020065105:11223344@demoproject.wdsif.mongodb.net/?retryWrites=true&w=majority&appName=DemoProject')
+mongoose.connect(MONGODB_URI)
 .then(result=>{
     User.findOne().then(user=>{
         if(!user)
@@ -73,7 +90,6 @@ mongoes.connect('mongodb+srv://f2020065105:11223344@demoproject.wdsif.mongodb.ne
             user.save();
         }
     });
-   
 
     app.listen(3000);
 })
