@@ -2,7 +2,6 @@
 
 const Product = require('../models/product');
 exports.getAddProduct = (req, res, next) => {
-
   res.render('admin/edit-product', {
     pageTitle: 'Add Product',
     path: '/admin/add-product',
@@ -33,7 +32,7 @@ exports.postAddProduct = (req, res, next) => {
 };
 
 exports.getProducts = (req, res, next) => {
-  Product.find()
+  Product.find({userId: req.user._id})
   // .select('title price -id')
   // .populate('userId','name')
   .then(products => {
@@ -78,23 +77,27 @@ exports.postEditProduct = (req, res, next) => {
   const updatedImageUrl = req.body.imageUrl;
   const updatedDesc = req.body.description;
   Product.findById(prodId).then(product=>{
+    if(product.userId.toString() !==req.user._id.toString())
+    {
+      return res.redirect('/')
+    }
     product.title=updatedTitle;
     product.price=updatedPrice;
     product.updatedImageUrl=updatedImageUrl;
     product.description=updatedDesc;
-    return product.save()
+    return product.save().then(ress=>{
+      console.log("Product Updated");
+      res.redirect('/admin/products');
+    })
 
-  }) .then(ress=>{
-    console.log("Product Updated");
-    res.redirect('/admin/products');
-  })
+  }) 
   .catch(err=>console.log(err))
 };
 
 exports.postDeleteProduct = (req, res, next) => {
   const prodId = req.body.productId;
   
-  Product.findByIdAndDelete(prodId).then(ress=>{
+  Product.deleteOne({_id:prodId,userId:req.user._id}).then(ress=>{
     console.log("Product Deleted");
     res.redirect('/admin/products');
 
