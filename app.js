@@ -11,7 +11,8 @@ const MongoDBStore = require('connect-mongodb-session')(session);
 const crypto = require('crypto');
 const secret = crypto.randomBytes(32).toString('hex');
 const MONGODB_URI='mongodb+srv://f2020065105:11223344@demoproject.wdsif.mongodb.net/?retryWrites=true&w=majority&appName=DemoProject'
-
+const csrf = require('csurf')
+const flasg = require('connect-flash')
 
 
 // Controllers and Sequelize imports for controller and Database
@@ -25,6 +26,8 @@ const store = new MongoDBStore({
   collection: 'sessions'
 });
 
+const csrfProtection = csrf()  
+
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 
@@ -34,6 +37,7 @@ app.set('views', 'views');
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 const authRoutes = require('./routes/auth');
+const flash = require('connect-flash/lib/flash');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -45,6 +49,9 @@ app.use(session({
     store:store
 }))
 
+app.use(csrfProtection)
+app.use(flash())
+
 app.use((req,res,next)=>{
     User.findById(req.session.user)
     .then(user=>{
@@ -55,7 +62,12 @@ app.use((req,res,next)=>{
 })
 
 
+app.use((req,res,next)=>{
+    res.locals.isAuthenticated=req.session.isLoggedIn;
+    res.locals.csrfToken=req.csrfToken();
+    next();
 
+})
 // App usage/midlewares imports
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
@@ -77,20 +89,6 @@ app.use(errorController.get404);
 
 mongoose.connect(MONGODB_URI)
 .then(result=>{
-    User.findOne().then(user=>{
-        if(!user)
-        {
-            const user=new User({
-                name:'Rizwan Ali',
-                email: 'rizwanali96960@gmail.com',
-                cart: {
-                    items : []
-                }
-            });
-            user.save();
-        }
-    });
-
     app.listen(3000);
 })
 .catch(err=>console.log(err))
