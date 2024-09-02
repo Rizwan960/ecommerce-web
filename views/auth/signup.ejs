@@ -54,16 +54,16 @@
                 <div class="row mb-3">
                     <div class="col">
                         <label for="firstName" class="form-label">First Name</label>
-                        <input type="text" class="form-control" id="firstName" name="firstName" placeholder="Enter your first name" required>
+                        <input type="text" class="form-control" id="firstName" name="firstName" placeholder="Enter your first name" value="<%= oldInput.firstName %>" required>
                     </div>
                     <div class="col">
                         <label for="lastName" class="form-label">Last Name</label>
-                        <input type="text" class="form-control" id="lastName" name="lastName" placeholder="Enter your last name" required>
+                        <input type="text" class="form-control" id="lastName" name="lastName" placeholder="Enter your last name" value="<%= oldInput.lastName %>" required>
                     </div>
                 </div>
                 <div class="mb-3">
                     <label for="email" class="form-label">Email</label>
-                    <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
+                    <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" value="<%= oldInput.email %>" required>
                 </div>
                 <div class="mb-3">
                     <label for="password" class="form-label">Password</label>

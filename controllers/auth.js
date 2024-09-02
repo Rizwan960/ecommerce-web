@@ -1,11 +1,13 @@
 const User = require('../models/user')
 const bcrypt = require('bcryptjs')
 const crypto = require('crypto');
+const { validationResult } = require('express-validator')
+
 const nodemailer = require('nodemailer')
 const sendgrindTransport = require('nodemailer-sendgrid-transport')
 const transport = nodemailer.createTransport(sendgrindTransport({
     auth:{
-        api_key:"",
+        api_key:"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",
     }
 }))
 
@@ -37,24 +39,37 @@ exports.getSignup = async (req, res, next) => {
     res.render('auth/signup', {
         path: '/signup',
         pageTitle: 'Signup',
-        errorMessage: message
+        errorMessage: message,
+        oldInput : {
+            firstName:'',
+            lastName:'',
+            email:'',
+            passowrd:'',
+            confirmPassowrd:'',
+        }
     })
 }
 
 exports.postSignup = async (req, res, next) => {
     try {
-        const { firstName, lastName, email, password, confirm_password } = req.body;
-    
-        const existingUser = await User.findOne({ email: email });
-        if (existingUser) {
-            req.flash('error','user already exsist with this email')
-            return res.redirect('/signup');
-        }
-        if(password!==confirm_password)
+        const { firstName, lastName, email, password } = req.body;
+        const errors = validationResult(req)
+        if(!errors.isEmpty())
         {
-            req.flash('error','password did not match')
-            return res.redirect('/signup');
+            return res.status(422).render('auth/signup', {
+                path: '/signup',
+                pageTitle: 'Signup',
+                errorMessage: errors.array()[0].msg,
+                oldInput : {
+                    firstName:firstName,
+                    lastName:lastName,
+                    email:email,
+                    passowrd:'',
+                    confirmPassowrd:'',
+                }
+            });
         }
+
         const hashedPassword = await bcrypt.hash(password, 12);
         const user = new User({
             firstName,
