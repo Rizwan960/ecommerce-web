@@ -24,9 +24,9 @@ router.post('/add-product',isAuth , [
             .trim()
             .isLength({ min: 3 })
             .withMessage('Title must be at least 3 characters long.'),
-        body('imageUrl')
-            .isURL()
-            .withMessage('Please enter a valid URL.'),
+        // body('imageUrl')
+        //     .isURL()
+        //     .withMessage('Please enter a valid URL.'),
         body('price')
             .isFloat({ gt: 0 })
             .withMessage('Price must be greater than 0.'),
@@ -45,9 +45,9 @@ router.post('/edit-product',isAuth,[
             .trim()
             .isLength({ min: 3 })
             .withMessage('Title must be at least 3 characters long.'),
-        body('imageUrl')
-            .isURL()
-            .withMessage('Please enter a valid URL.'),
+        // body('imageUrl')
+        //     .isURL()
+        //     .withMessage('Please enter a valid URL.'),
         body('price')
             .isFloat({ gt: 0 })
             .withMessage('Price must be greater than 0.'),

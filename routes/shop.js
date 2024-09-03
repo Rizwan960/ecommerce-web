@@ -28,6 +28,6 @@ router.get('/orders',isAuth , shopController.getOrders);
 
 router.post('/create-order',isAuth ,shopController.postOrders);
 
-// router.get('/checkout', shopController.getCheckout);
+router.get('/orders/:orderId',isAuth ,shopController.getInvoice);
 
 module.exports = router;

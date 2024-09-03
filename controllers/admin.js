@@ -2,7 +2,7 @@
 const { validationResult } = require('express-validator')
 const mongoose = require('mongoose');
 const Product = require('../models/product');
-
+const fileHelper = require('../util/file')
 
 exports.getAddProduct = (req, res, next) => {
   res.render('admin/edit-product', {
@@ -26,7 +26,6 @@ exports.postAddProduct = (req, res, next) => {
           hasError: true,
           product: {
               title: req.body.title,
-              imageUrl: req.body.imageUrl,
               price: req.body.price,
               description: req.body.description
           },
@@ -35,14 +34,30 @@ exports.postAddProduct = (req, res, next) => {
       });
   }
   const title = req.body.title;
-  const imageUrl = req.body.imageUrl;
+  const imageUrl = req.file;
   const price = req.body.price;
   const description = req.body.description;
+  if (!imageUrl) {
+    return res.status(422).render('admin/edit-product', {
+        pageTitle: 'Add Product',
+        path: '/admin/add-product',
+        editing: false,
+        hasError: true,
+        product: {
+            title: req.body.title,
+            price: req.body.price,
+            description: req.body.description
+        },
+        errorMessage: 'Only png, jpg, jpeg format supported',
+        validationErrors: []
+    });
+}
+const image= imageUrl.path;
   const product=new Product({
     title:title,
     price:price,
     description:description,
-    imageUrl:imageUrl,
+    imageUrl:image,
     userId: req.user
   });
   product.save()
@@ -105,7 +120,8 @@ exports.getEditProduct = async (req, res, next) => {
 };
 
 exports.postEditProduct = async (req, res, next) => {
-  const { productId, title, imageUrl, price, description } = req.body;
+  const { productId, title, price, description } = req.body;
+  const image=req.file;
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
@@ -114,7 +130,7 @@ exports.postEditProduct = async (req, res, next) => {
           path: '/admin/edit-product',
           editing: true,
           hasError: true,
-          product: { _id: productId, title, imageUrl, price, description },
+          product: { _id: productId, title, price, description },
           errorMessage: errors.array()[0].msg,
           validationErrors: errors.array()
       });
@@ -129,7 +145,12 @@ exports.postEditProduct = async (req, res, next) => {
           return res.redirect('/');
       }
       product.title = title;
-      product.imageUrl = imageUrl;
+      if(image)
+      {
+        fileHelper.deleteFile(product.imageUrl)
+        product.imageUrl = image.path;
+
+      }
       product.price = price;
       product.description = description;
       await product.save();
@@ -146,6 +167,15 @@ exports.postEditProduct = async (req, res, next) => {
 exports.postDeleteProduct = async (req, res, next) => {
   const prodId = req.body.productId;
   try {
+    Product.findById(prodId).then(product=>{
+      if(!product)
+      {
+        next(new Error('No product found'))
+      }
+      fileHelper.deleteFile(product.imageUrl)
+    }).catch(err=>{
+      next(err)
+    });
       const result = await Product.deleteOne({ _id: prodId, userId: req.user._id });
       if (result.deletedCount === 0) {
           return res.redirect('/');

@@ -35,7 +35,7 @@
                                                 <tr>
                                                     <td><%= product.product.title %></td>
                                                     <td>
-                                                        <img src="<%= product.product.imageUrl %>" alt="<%= product.product.name %>" class="img-fluid" style="width: 75px; height: auto;">
+                                                        <img src="/<%= product.product.imageUrl %>" alt="<%= product.product.name %>" class="img-fluid" style="width: 75px; height: auto;">
                                                     </td>
                                                     <td><%= product.quantity %></td>
                                                     <td>$<%= product.product.price %></td>
@@ -50,6 +50,10 @@
                                             </tr>
                                         </tfoot>
                                     </table>
+                                </div>
+                                <!-- Download Invoice Button -->
+                                <div class="text-right mt-3">
+                                    <a href="/orders/<%= order._id %>" class="btn btn-success">Download Invoice</a>
                                 </div>
                             </div>
                         </div>
