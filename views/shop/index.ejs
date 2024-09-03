@@ -22,11 +22,24 @@
                         </div>
                         <div class="card__actions">
                             <a href="/products/<%= product._id %>" class="btn btn-primary">Details</a>
-                        
-                                <%- include('../includes/add-to-cart.ejs', {product: product}) %>
-                             
+                            <%- include('../includes/add-to-cart.ejs', {product: product}) %>
                         </div>
                     </article>
+                <% } %>
+            </div>
+    
+            <!-- Pagination Links -->
+            <div class="pagination">
+                <% if (hasPreviousPage) { %>
+                    <a href="/?page=<%= previousPage %>" class="btn btn-primary">&laquo; Prev</a>
+                <% } %>
+                
+                <% for (let i = 1; i <= lastPage; i++) { %>
+                    <a href="/?page=<%= i %>" class="btn btn-primary <%= i === currentPage ? 'active' : '' %>"><%= i %></a>
+                <% } %>
+            
+                <% if (hasNextPage) { %>
+                    <a href="/?page=<%= nextPage %>" class="btn btn-primary">Next &raquo;</a>
                 <% } %>
             </div>
         <% } else { %>
@@ -36,4 +49,5 @@
             </div>
         <% } %>
     </main>
+    
 <%- include('../includes/end.ejs') %>

@@ -37,6 +37,19 @@
                             </article>
                             <% } %>
                     </div>
+                    <div class="pagination">
+                        <% if (hasPreviousPage) { %>
+                            <a href="/products/?page=<%= previousPage %>" class="btn btn-primary">&laquo; Prev</a>
+                        <% } %>
+                        
+                        <% for (let i = 1; i <= lastPage; i++) { %>
+                            <a href="/products/?page=<%= i %>" class="btn btn-primary <%= i === currentPage ? 'active' : '' %>"><%= i %></a>
+                        <% } %>
+                    
+                        <% if (hasNextPage) { %>
+                            <a href="/products/?page=<%= nextPage %>" class="btn btn-primary">Next &raquo;</a>
+                        <% } %>
+                    </div>
                     <% } else { %>
                         <h1>No Products Found!</h1>
                         <% } %>

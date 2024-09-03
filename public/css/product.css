@@ -107,3 +107,27 @@
     color: #ffffff;
     border-radius: 5px;
 }
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.pagination a {
+    margin: 0 5px;
+    padding: 8px 15px;
+    background-color: #007bff;
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.2s ease;
+}
+
+.pagination a.active {
+    background-color: #0056b3;
+    font-weight: bold;
+}
+
+.pagination a:hover {
+    background-color: #0056b3;
+}
