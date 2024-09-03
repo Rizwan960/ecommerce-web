@@ -7,7 +7,7 @@ const nodemailer = require('nodemailer')
 const sendgrindTransport = require('nodemailer-sendgrid-transport')
 const transport = nodemailer.createTransport(sendgrindTransport({
     auth:{
-        api_key:"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",
+        api_key:"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",
     }
 }))
 
@@ -23,7 +23,10 @@ exports.getLogin = async (req, res, next) => {
     res.render('auth/login', {
         path: '/login',
         pageTitle: 'Login',
-        errorMessage: message
+        errorMessage: message,
+        oldInput : {
+            email:'',
+        },
        
     })
 }
@@ -46,7 +49,8 @@ exports.getSignup = async (req, res, next) => {
             email:'',
             passowrd:'',
             confirmPassowrd:'',
-        }
+        },
+        validationErros:[]
     })
 }
 
@@ -66,7 +70,8 @@ exports.postSignup = async (req, res, next) => {
                     email:email,
                     passowrd:'',
                     confirmPassowrd:'',
-                }
+                },
+                validationErros:errors.array()
             });
         }
 
@@ -136,6 +141,19 @@ exports.postLogin = async (req, res, next) => {
     //  res.setHeader('Set-Cookie', 'loggedIn=true')
     const { email, password } = req.body;
     try {
+        const errors = validationResult(req)
+        if(!errors.isEmpty())
+            {
+                return res.status(422).render('auth/login', {
+                    path: '/login',
+                    pageTitle: 'Login',
+                    errorMessage: errors.array()[0].msg,
+                    oldInput : {
+                        email:email,
+                    },
+                    
+                });
+            }
         // Find user by email
         const user = await User.findOne({ email: email });
         if (!user) {

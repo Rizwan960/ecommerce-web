@@ -1,16 +1,39 @@
 /*IF YOU ARE USING MONGODB with Mongoose USE BELOW METHOD TO CREATE TABLE STRUCTURE */
-
+const { validationResult } = require('express-validator')
+const mongoose = require('mongoose');
 const Product = require('../models/product');
+
+
 exports.getAddProduct = (req, res, next) => {
   res.render('admin/edit-product', {
     pageTitle: 'Add Product',
     path: '/admin/add-product',
     editing: false,
+    hasError: false,
+    errorMessage: null,
+    validationErrors: []
     
   });
 };
 
 exports.postAddProduct = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+      return res.status(422).render('admin/edit-product', {
+          pageTitle: 'Add Product',
+          path: '/admin/add-product',
+          editing: false,
+          hasError: true,
+          product: {
+              title: req.body.title,
+              imageUrl: req.body.imageUrl,
+              price: req.body.price,
+              description: req.body.description
+          },
+          errorMessage: errors.array()[0].msg,
+          validationErrors: errors.array()
+      });
+  }
   const title = req.body.title;
   const imageUrl = req.body.imageUrl;
   const price = req.body.price;
@@ -27,82 +50,114 @@ exports.postAddProduct = (req, res, next) => {
   console.log('Product Created Successfully');
   res.redirect('/admin/products')
   })
-  .catch(err=>console.log(err))
-
-};
-
-exports.getProducts = (req, res, next) => {
-  Product.find({userId: req.user._id})
-  // .select('title price -id')
-  // .populate('userId','name')
-  .then(products => {
-    res.render('admin/products', {
-      prods: products,
-      pageTitle: 'Admin Products',
-      path: '/admin/products',
-      
-    });
+  .catch(err=>{
+    const error = new Error(err);
+    error.httpStatusCode=500;
+    return next(error); 
   })
-  .catch(err=>console.log(err))
+
+};
+
+exports.getProducts = async (req, res, next) => {
+  try {
+      const products = await Product.find({ userId: req.user._id });
+      res.render('admin/products', {
+          prods: products,
+          pageTitle: 'Admin Products',
+          path: '/admin/products',
+          errorMessage: null
+      });
+  } catch (err) {
+      console.error('Error fetching products:', err);
+      const error = new Error('Fetching products failed.');
+      error.httpStatusCode = 500;
+      return next(error);
+  }
 };
 
 
-exports.getEditProduct = (req, res, next) => {
-  const editMode = req.query.edit;
+exports.getEditProduct = async (req, res, next) => {
+  const editMode = req.query.edit === 'true';
   if (!editMode) {
-    return res.redirect('/');
+      return res.redirect('/');
   }
   const prodId = req.params.productId;
-  Product.findById(prodId)
-  .then(product => {
-
-    if (!product) {
-      return res.redirect('/');
-    }
-    res.render('admin/edit-product', {
-      pageTitle: 'Edit Product',
-      path: '/admin/edit-product',
-      editing: editMode,
-      product: product,
-      
-    });
-  })
-  .catch(err=>console.log(err));
+  try {
+      const product = await Product.findById(prodId);
+      if (!product) {
+          return res.redirect('/');
+      }
+      res.render('admin/edit-product', {
+          pageTitle: 'Edit Product',
+          path: '/admin/edit-product',
+          editing: editMode,
+          hasError: false,
+          product,
+          errorMessage: null,
+          validationErrors: []
+      });
+  } catch (err) {
+      console.error('Error fetching product for edit:', err);
+      const error = new Error('Fetching product failed.');
+      error.httpStatusCode = 500;
+      return next(error);
+  }
 };
 
-exports.postEditProduct = (req, res, next) => {
-  const prodId = req.body.productId;
-  const updatedTitle = req.body.title;
-  const updatedPrice = req.body.price;
-  const updatedImageUrl = req.body.imageUrl;
-  const updatedDesc = req.body.description;
-  Product.findById(prodId).then(product=>{
-    if(product.userId.toString() !==req.user._id.toString())
-    {
-      return res.redirect('/')
-    }
-    product.title=updatedTitle;
-    product.price=updatedPrice;
-    product.updatedImageUrl=updatedImageUrl;
-    product.description=updatedDesc;
-    return product.save().then(ress=>{
-      console.log("Product Updated");
+exports.postEditProduct = async (req, res, next) => {
+  const { productId, title, imageUrl, price, description } = req.body;
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+      return res.status(422).render('admin/edit-product', {
+          pageTitle: 'Edit Product',
+          path: '/admin/edit-product',
+          editing: true,
+          hasError: true,
+          product: { _id: productId, title, imageUrl, price, description },
+          errorMessage: errors.array()[0].msg,
+          validationErrors: errors.array()
+      });
+  }
+
+  try {
+      const product = await Product.findById(productId);
+      if (!product) {
+          return res.redirect('/');
+      }
+      if (product.userId.toString() !== req.user._id.toString()) {
+          return res.redirect('/');
+      }
+      product.title = title;
+      product.imageUrl = imageUrl;
+      product.price = price;
+      product.description = description;
+      await product.save();
+      console.log('Product Updated Successfully');
       res.redirect('/admin/products');
-    })
-
-  }) 
-  .catch(err=>console.log(err))
+  } catch (err) {
+      console.error('Error updating product:', err);
+      const error = new Error('Updating product failed.');
+      error.httpStatusCode = 500;
+      return next(error);
+  }
 };
 
-exports.postDeleteProduct = (req, res, next) => {
+exports.postDeleteProduct = async (req, res, next) => {
   const prodId = req.body.productId;
-  
-  Product.deleteOne({_id:prodId,userId:req.user._id}).then(ress=>{
-    console.log("Product Deleted");
-    res.redirect('/admin/products');
-
-  })
-  .catch(err=>console.log(err));
+  try {
+      const result = await Product.deleteOne({ _id: prodId, userId: req.user._id });
+      if (result.deletedCount === 0) {
+          return res.redirect('/');
+      }
+      console.log('Product Deleted Successfully');
+      res.redirect('/admin/products');
+  } catch (err) {
+      console.error('Error deleting product:', err);
+      const error = new Error('Deleting product failed.');
+      error.httpStatusCode = 500;
+      return next(error);
+  }
 };
 
 

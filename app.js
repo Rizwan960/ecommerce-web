@@ -53,28 +53,46 @@ app.use(csrfProtection)
 app.use(flash())
 
 app.use((req,res,next)=>{
-    User.findById(req.session.user)
-    .then(user=>{
-     req.user=user;
-     next()
-    })
-    .catch(err=>console.log(err))
-})
-
-
-app.use((req,res,next)=>{
     res.locals.isAuthenticated=req.session.isLoggedIn;
     res.locals.csrfToken=req.csrfToken();
     next();
-
 })
+
+app.use((req,res,next)=>{
+    if(!req.session.user)
+    {
+    return next();
+    }
+    User.findById(req.session.user)
+    .then(user=>{
+        if(!user)
+        {
+            return next();
+        }
+     req.user=user;
+     next()
+    })
+    .catch(err=>{
+       next(new Error(err))
+    })
+})
+
+
+
 // App usage/midlewares imports
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 app.use(authRoutes);
+app.use(errorController.get500);
 app.use(errorController.get404);
 
-
+app.use((err, req, res, next) => {
+    res.status(err.httpStatusCode || 500);
+    res.render('500', {
+    statusCode: err.httpStatusCode || 500,
+    message: err.message || 'Something went wrong!'
+    });
+});
 /*------------------------------Core Imports end here----------------------------------*/
 
 /* if you are using mongoDbuse this method to connect and run app on port */

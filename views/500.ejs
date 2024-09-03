@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= statusCode %> - Error</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+        }
+        .error-code {
+            font-size: 72px;
+            font-weight: bold;
+            color: #dc3545;
+        }
+        .error-message {
+            font-size: 24px;
+            color: #6c757d;
+        }
+        .error-description {
+            font-size: 18px;
+            color: #495057;
+            margin: 20px 0;
+        }
+        .back-link {
+            font-size: 16px;
+            color: #007bff;
+            text-decoration: none;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="error-code"><%= statusCode %></div>
+        <div class="error-message"><%= message %></div>
+        <div class="error-description">
+            <p>We're sorry, but the page you are looking for might have been moved or deleted.</p>
+            <p>Try going back to the <a href="/" class="back-link">homepage</a> or check your URL.</p>
+        </div>
+    </div>
+</body>
+</html>
