@@ -164,8 +164,36 @@ exports.postEditProduct = async (req, res, next) => {
   }
 };
 
-exports.postDeleteProduct = async (req, res, next) => {
-  const prodId = req.body.productId;
+
+// use this when dont want to reload page for post request
+// exports.postDeleteProduct = async (req, res, next) => {
+//   const prodId = req.body.productId;
+//   try {
+//     Product.findById(prodId).then(product=>{
+//       if(!product)
+//       {
+//         next(new Error('No product found'))
+//       }
+//       fileHelper.deleteFile(product.imageUrl)
+//     }).catch(err=>{
+//       next(err)
+//     });
+//       const result = await Product.deleteOne({ _id: prodId, userId: req.user._id });
+//       if (result.deletedCount === 0) {
+//           return res.redirect('/');
+//       }
+//       console.log('Product Deleted Successfully');
+//       res.redirect('/admin/products');
+//   } catch (err) {
+//       console.error('Error deleting product:', err);
+//       const error = new Error('Deleting product failed.');
+//       error.httpStatusCode = 500;
+//       return next(error);
+//   }
+// };
+
+exports.deleteProduct = async (req, res, next) => {
+  const prodId = req.params.productId;
   try {
     Product.findById(prodId).then(product=>{
       if(!product)
@@ -181,15 +209,12 @@ exports.postDeleteProduct = async (req, res, next) => {
           return res.redirect('/');
       }
       console.log('Product Deleted Successfully');
-      res.redirect('/admin/products');
+      res.status(200).json({messahe:'success'})
   } catch (err) {
       console.error('Error deleting product:', err);
-      const error = new Error('Deleting product failed.');
-      error.httpStatusCode = 500;
-      return next(error);
+      res.status(500).json({messahe:'Deleting Product Failed'})
   }
 };
-
 
 /*IF YOU ARE USING MONGODB USE BELOW METHOD TO CREATE TABLE STRUCTURE
 

@@ -1,0 +1,59 @@
+<%- include('../includes/head.ejs') %>
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="/css/cart.css">
+</head>
+
+<body>
+    <%- include('../includes/navigation.ejs') %>
+    
+    <div class="container mt-5">
+        <h1 class="text-center">Checkout</h1>
+        
+        <div class="row">
+            <div class="col-md-8">
+                <h3>Your Cart</h3>
+                <ul class="list-group mb-4">
+                    <% products.forEach(product => { %>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5><%= product.title %></h5>
+                                <small class="text-muted">Quantity: <%= product.quantity %></small>
+                            </div>
+                            <span class="text-muted">$<%= (product.quantity * product.price).toFixed(2) %></span>
+                        </li>
+                    <% }) %>
+                </ul>
+            </div>
+            
+            <div class="col-md-4">
+                <h3>Order Summary</h3>
+                <ul class="list-group">
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Total:</span>
+                        <strong>$<%= totalSum.toFixed(2) %></strong>
+                    </li>
+                </ul>
+                <div>
+                    <button id="proceedToPaymentBtn" class="btn btn-primary btn-block mt-3" type="button">Proceed to Payment</button>
+                    <script src="https://js.stripe.com/v3/"></script>
+                    <script>
+                      var stripe = Stripe('pk_test_51PvDBsRqKIvrZClgc88H3tMjIGf2j453MtBxCJLy4IDqLyJWEjjjOJyel7tbpIEFk0RzrhMC4nv8ia7kd8Brc36Z00FCV40PwD');
+                      var orderBtn = document.getElementById("proceedToPaymentBtn")
+                      orderBtn.addEventListener('click',function(){
+                        console.log("Clicked");
+                        stripe.redirectToCheckout({
+                            sessionId : '<%= session %>'
+                        })
+                      })
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include('../includes/end.ejs') %>
+    
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>

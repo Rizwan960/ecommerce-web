@@ -5,6 +5,7 @@ const Order = require('../models/order');
 const fs = require('fs')
 const path = require('path');
 const PDFDocument = require('pdfkit')
+const stripe = require('stripe')("sk_test_51PvDBsRqKIvrZClg9ljEpoDKDcUjSOUFIr6f6HAXQAJBSW5yMMQVLJd7MBbBhL8K59D5iYjzt3mMMGzJziTZUhNd00YJq0cdTn")
 
 const ITEMS_PER_PAGE=2;
 
@@ -154,8 +155,6 @@ exports.postOrders = async (req, res, next) => {
   }
 };
 
-
-
 exports.getOrders = async (req, res, next) => {
     Order.find({
       'user.userId':req.user._id
@@ -172,9 +171,7 @@ exports.getOrders = async (req, res, next) => {
 };
 
 exports.getInvoice = async (req, res, next) => {
-
-    // Use the below method to generate the pdf on the fly from the server which was not already saved
-
+  // Use the below method to generate the pdf on the fly from the server which was not already saved
   const orderId=req.params.orderId;
   Order.findById(orderId).then(order=>{
     if(!order)
@@ -244,6 +241,46 @@ exports.getInvoice = async (req, res, next) => {
   // })
 
 };
+
+exports.getCheckout = async(req,res,next)=>{
+  let totalPrice=0;
+  req.user.getCart()
+    .then(products=>{
+      products.forEach(p=>{
+        console.log(p);
+        totalPrice+=p.quantity*p.price;
+      });
+      stripe.checkout.sessions.create({
+        payment_method_types : ['card'],
+        line_items : products.map(p=>{
+          return {
+            price_data: {
+              currency: 'usd',
+              product_data: {
+                name: p.title,
+                description: p.description,
+              },
+              unit_amount: p.price * 100,
+            },
+          
+            quantity: p.quantity
+          }
+        }),
+        mode: 'payment',
+        success_url: req.protocol + '://' + req.get('host') + '/checkout/success',
+        cancel_url: req.protocol + '://' + req.get('host') + '/checkout/cancel',
+      })
+      .then(session=>{
+        res.render('shop/checkout', {
+          path: '/checkout',
+          pageTitle: 'Checkout',
+          products: products,
+          totalSum: totalPrice,
+          session: session.id
+        });
+      });
+    }).catch(err=>console.log(err));
+}
 
 
 

@@ -31,10 +31,12 @@
                 <% }) %>
             </ul>
             <div class="text-center mb-5">
-                <form action="/create-order" method="post">
+                <!-- <form action="/create-order" method="post">
                     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                     <button type="submit" class="btn btn-success btn-lg">Order Now</button>
-                </form>
+                </form> -->
+
+                <a class="btn" href="/checkout">Order Now</a>
             </div>
         <% } else { %>
             <div class="text-center mt-5">

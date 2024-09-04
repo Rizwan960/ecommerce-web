@@ -63,11 +63,15 @@ app.use('/images',express.static(path.join(__dirname, 'images')));
 
 
 app.use(session({
-    secret:secret,
-    resave:false,
-    saveUninitialized:false,
-    store:store
-}))
+    secret: secret,
+    resave: false,
+    saveUninitialized: false,
+    store: store,
+    cookie: {
+        maxAge: 3600000 
+    }
+}));
+
 
 app.use(csrfProtection)
 app.use(flash())
